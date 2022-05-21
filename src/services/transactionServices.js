@@ -5,10 +5,10 @@ let getAll = () => {
     return new Promise(async (resolve, reject) => {
         try {
             let pool = await conn;
-            let sqlString = "select * from [dbo].[Guitar]";
-            let guitars = await pool.request().query(sqlString);
-            if (guitars)
-                resolve(guitars.recordsets)
+            let sqlString = "select * from [dbo].[Transaction]";
+            let transactions = await pool.request().query(sqlString);
+            if (transactions)
+                resolve(transactions.recordsets)
             else
                 resolve(null)
         }

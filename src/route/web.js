@@ -9,7 +9,7 @@ let initWebRoutes = (app) => {
     router.get('/', homeController.getHomePage)
     router.get('/guitar', guitarController.getAllGuitar);
     router.get('/user', userController.getAllUser);
-    router.post('/login', userController.handleUserLogin);
+    router.post('/login', userController.handleLogin);
     return app.use("/", router)
 }
 

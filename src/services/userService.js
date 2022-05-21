@@ -29,7 +29,7 @@ let findByEmail = (email) => {
                 .query("SELECT * from [dbo].[User] where email = @input_parameter");
 
             if (users)
-                resolve(users.recordsets)
+                resolve(users.recordsets[0][0])
             else
                 resolve(null)
         }
@@ -44,11 +44,13 @@ let handleUserLogin = (email, password) => {
     return new Promise(async (resolve, reject) => {
         try {
             let userData = {};
-            let isExist = await checkUserEmail(email);
-            if (isExist) {
+            let user = await findByEmail(email);
+            console.log(user);
+            console.log(password)
+            if (user) {
                 let user = await findByEmail(email);
                 if (user) {
-                    if (password !== user.password) {
+                    if (password != user.password) {
                         userData.errCode = 3;
                         userData.message = "Mật khẩu không đúng";
                     }

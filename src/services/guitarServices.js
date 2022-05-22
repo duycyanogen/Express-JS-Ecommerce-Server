@@ -7,7 +7,7 @@ let getAll = async () => {
         let sqlString = "select * from [dbo].[Guitar]";
         let guitars = await pool.request().query(sqlString);
         if (guitars)
-            return (guitars.recordsets)
+            return (guitars.recordsets[0])
         else
             return ([])
     }

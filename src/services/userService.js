@@ -9,7 +9,7 @@ let getAll = async () => {
         let users = await pool.request().query(sqlString);
         console.log("users", users)
         if (users)
-            return (users.recordsets)
+            return (users.recordsets[0])
         else
             return ([])
     }

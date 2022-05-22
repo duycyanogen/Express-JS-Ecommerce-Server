@@ -34,7 +34,31 @@ let handleLogin = async (req, res) => {
 
 }
 
+let handleRegis = async (req, res) => {
+    let email = req.body.email;
+    let password = req.body.password;
+    let address = req.body.address;
+    let phone = req.body.phone;
+    if (!email || !password || !address || !phone) {
+        return res.status(500).json({
+            errCode: 1,
+            message: "Vui lòng nhập đủ thông tin!"
+        })
+    }
+    let user = { ...req.body };
+    user.created = new Date();
+    user.isDeleted = 0;
+    user.idRole = 1;
+    let userData = await userServices.handleUserRegis(user);
+    console.log("User", userData);
+    return res.status(200).json({
+        userData
+    })
+
+}
+
 module.exports = {
     getAllUser: getAllUser,
     handleLogin: handleLogin,
+    handleRegis: handleRegis
 }

@@ -1,81 +1,112 @@
 
 import { conn, sql } from '../connect';
 //var conn = require('../connect')
-let getAll = () => {
-    return new Promise(async (resolve, reject) => {
-        try {
-            let pool = await conn;
-            let sqlString = "select * from [dbo].[User]";
-            let users = await pool.request().query(sqlString);
-            console.log("users", users)
-            if (users)
-                resolve(users.recordsets)
-            else
-                resolve(null)
-        }
-        catch (e) {
-            reject(e);
-        }
-    })
+let getAll = async () => {
+
+    try {
+        let pool = await conn;
+        let sqlString = "select * from [dbo].[User]";
+        let users = await pool.request().query(sqlString);
+        console.log("users", users)
+        if (users)
+            return (users.recordsets)
+        else
+            return ([])
+    }
+    catch (e) {
+        return (null);
+    }
 
 }
 
-let findByEmail = (email) => {
-    return new Promise(async (resolve, reject) => {
-        try {
-            let pool = await conn;
-            let users = await pool.request()
-                .input('input_parameter', sql.NVarChar, email)
-                .query("SELECT * from [dbo].[User] where email = @input_parameter");
+let findByEmail = async (email) => {
+    try {
+        let pool = await conn;
+        let users = await pool.request()
+            .input('input_parameter', sql.NVarChar, email)
+            .query("SELECT * from [dbo].[User] where email = @input_parameter");
 
-            if (users)
-                resolve(users.recordsets[0][0])
-            else
-                resolve(null)
-        }
-        catch (e) {
-            reject(e);
-        }
-    })
+        if (users)
+            return (users.recordsets[0][0])
+        else
+            return ([])
+    }
+    catch (e) {
+        return (e);
+    }
 
 }
 
-let handleUserLogin = (email, password) => {
-    return new Promise(async (resolve, reject) => {
-        try {
-            let userData = {};
+let handleUserLogin = async (email, password) => {
+    try {
+        let userData = {};
+        let user = await findByEmail(email);
+        if (user) {
             let user = await findByEmail(email);
-            console.log(user);
-            console.log(password)
             if (user) {
-                let user = await findByEmail(email);
-                if (user) {
-                    if (password != user.password) {
-                        userData.errCode = 3;
-                        userData.message = "Mật khẩu không đúng";
-                    }
-                    else {
-                        userData.errCode = 0;
-                        userData.message = "OK";
-                        userData.user = user;
-                    }
+                if (password != user.password) {
+                    userData.errCode = 3;
+                    userData.message = "Mật khẩu không đúng";
                 }
                 else {
-                    userData.errCode = 2;
-                    userData.message = "Không tìm thấy user"
+                    userData.errCode = 0;
+                    userData.message = "OK";
+                    userData.user = user;
                 }
             }
-            resolve(userData)
+            else {
+                userData.errCode = 2;
+                userData.message = "Không tìm thấy user"
+            }
         }
-        catch (e) {
-            reject(e);
-        }
-    })
+        return (userData)
+    }
+    catch (e) {
+        userData.errCode = 500;
+        userData.message = e.message.substring(0, 100);
+        return (userData);
+    }
 }
+
+let handleUserRegis = async (user) => {
+    //let trans;
+    let regisStatus = {};
+    try {
+
+        let pool = await conn;
+        //trans = (await conn).transaction();
+        //trans.begin();
+        let result = await pool.request()
+            .input('name', sql.NVarChar, user.name)
+            .input('email', sql.NVarChar, user.email)
+            .input('phone', sql.NVarChar, user.phone)
+            .input('address', sql.NVarChar, user.address)
+            .input('password', sql.NVarChar, user.password)
+            .input('created', sql.Date, user.created)
+            .input('updated', sql.NVarChar, user.updated)
+            .input('isDeleted', sql.SmallInt, user.isDeleted)
+            .input('idRole', sql.Int, user.idRole)
+            .query("Insert into [dbo].[User] (name,email,phone,address,password,created,updated,isDeleted,idRole) values (@name,@email,@phone,@address,@password,@created,@updated,@isDeleted,@idRole)");
+        regisStatus.errCode = 0;
+        regisStatus.message = "Đăng kí tài khoản thành công!"
+        return regisStatus;
+    }
+    catch (e) {
+        regisStatus.errCode = 1;
+        regisStatus.message = e.message.substring(0, 100);
+        return regisStatus;
+        //trans.rollback();
+
+    }
+
+}
+
+
 
 
 
 module.exports = {
     getAll: getAll,
-    handleUserLogin: handleUserLogin
+    handleUserLogin: handleUserLogin,
+    handleUserRegis: handleUserRegis
 }

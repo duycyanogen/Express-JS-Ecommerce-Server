@@ -49,7 +49,7 @@ let handleRegis = async (req, res) => {
     user.created = new Date();
     user.isDeleted = 0;
     user.idRole = 1;
-    let userData = await userServices.handleUserRegis(user);
+    let userData = await userServices.insert(user);
     console.log("User", userData);
     return res.status(200).json({
         userData
@@ -57,8 +57,45 @@ let handleRegis = async (req, res) => {
 
 }
 
+let update = async (req, res) => {
+
+    let id = req.body.id;
+    if (!id) {
+        return res.status(500).json({
+            errCode: 1,
+            message: "Vui lòng nhập id!"
+        })
+    }
+    let user = { ...req.body };
+    user.updated = new Date();
+    let userData = await userServices.update(user);
+    console.log("User", userData);
+    return res.status(200).json({
+        userData
+    })
+
+}
+
+let deleted = async (req, res) => {
+    let id = req.body.id;
+    if (!id) {
+        return res.status(500).json({
+            errCode: 1,
+            message: "Vui lòng nhập id!"
+        })
+    }
+    let user = { ...req.body };
+    let userData = await userServices.deleted(user);
+    console.log("User", userData);
+    return res.status(200).json({
+        userData
+    })
+}
+
 module.exports = {
     getAllUser: getAllUser,
     handleLogin: handleLogin,
-    handleRegis: handleRegis
+    handleRegis: handleRegis,
+    update: update,
+    deleted: deleted
 }

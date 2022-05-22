@@ -68,7 +68,7 @@ let handleUserLogin = async (email, password) => {
     }
 }
 
-let handleUserRegis = async (user) => {
+let insert = async (user) => {
     //let trans;
     let regisStatus = {};
     try {
@@ -83,7 +83,7 @@ let handleUserRegis = async (user) => {
             .input('address', sql.NVarChar, user.address)
             .input('password', sql.NVarChar, user.password)
             .input('created', sql.Date, user.created)
-            .input('updated', sql.NVarChar, user.updated)
+            .input('updated', sql.Date, user.updated)
             .input('isDeleted', sql.SmallInt, user.isDeleted)
             .input('idRole', sql.Int, user.idRole)
             .query("Insert into [dbo].[User] (name,email,phone,address,password,created,updated,isDeleted,idRole) values (@name,@email,@phone,@address,@password,@created,@updated,@isDeleted,@idRole)");
@@ -101,6 +101,62 @@ let handleUserRegis = async (user) => {
 
 }
 
+let update = async (user) => {
+    //let trans;
+    let updateStatus = {};
+    try {
+
+        let pool = await conn;
+        //trans = (await conn).transaction();
+        //trans.begin();
+        let result = await pool.request()
+            .input('id', sql.Int, user.id)
+            .input('name', sql.NVarChar, user.name)
+            .input('phone', sql.NVarChar, user.phone)
+            .input('address', sql.NVarChar, user.address)
+            .input('isDeleted', sql.SmallInt, user.isDeleted)
+            .input('idRole', sql.Int, user.idRole)
+            .input('updated', sql.Date, user.updated)
+            .query("Update [dbo].[User] set (name = @name,phone = @phone,address=@address,isDeleted=@isDeleted,idRole=@idRole, updated = @updated) where id = @id");
+        updateStatus.errCode = 0;
+        updateStatus.message = "Thay đổi thông tin thành công!"
+        return updateStatus;
+    }
+    catch (e) {
+        updateStatus.errCode = 1;
+        updateStatus.message = e.message.substring(0, 100);
+        return updateStatus;
+        //trans.rollback();
+
+    }
+
+}
+
+
+let deleted = async (user) => {
+    //let trans;
+    let updateStatus = {};
+    try {
+
+        let pool = await conn;
+        //trans = (await conn).transaction();
+        //trans.begin();
+        let result = await pool.request()
+            .input('id', sql.Int, user.id)
+            .query("Update [dbo].[User] set (isDeleted = 1) where id = @id");
+        updateStatus.errCode = 0;
+        updateStatus.message = "Thay đổi thông tin thành công!"
+        return updateStatus;
+    }
+    catch (e) {
+        updateStatus.errCode = 1;
+        updateStatus.message = e.message.substring(0, 100);
+        return updateStatus;
+        //trans.rollback();
+
+    }
+
+}
 
 
 
@@ -108,5 +164,7 @@ let handleUserRegis = async (user) => {
 module.exports = {
     getAll: getAll,
     handleUserLogin: handleUserLogin,
-    handleUserRegis: handleUserRegis
+    insert: insert,
+    update: update,
+    deleted: deleted
 }

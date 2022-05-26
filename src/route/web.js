@@ -8,7 +8,7 @@ let initWebRoutes = (app) => {
 
     router.get('/', homeController.getHomePage)
     router.get('/api/v1/guitar', guitarController.getAllGuitar);
-    router.post('/api/v1/guitar/add', guitarController.add);
+    //router.post('/api/v1/guitar/add', guitarController.add);
     router.post('/api/v1/guitar/update', guitarController.update);
     router.post('/api/v1/guitar/delete', guitarController.deleted);
 

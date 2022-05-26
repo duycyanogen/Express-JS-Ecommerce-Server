@@ -42,23 +42,21 @@ let handleUserLogin = async (email, password) => {
         let userData = {};
         let user = await findByEmail(email);
         if (user) {
-            let user = await findByEmail(email);
-            if (user) {
-                if (password != user.password) {
-                    userData.errCode = 3;
-                    userData.message = "Mật khẩu không đúng";
-                }
-                else {
-                    userData.errCode = 0;
-                    userData.message = "OK";
-                    userData.user = user;
-                }
+            if (password != user.password) {
+                userData.errCode = 3;
+                userData.message = "Mật khẩu không đúng";
             }
             else {
-                userData.errCode = 2;
-                userData.message = "Không tìm thấy user"
+                userData.errCode = 0;
+                userData.message = "OK";
+                userData.user = user;
             }
         }
+        else {
+            userData.errCode = 2;
+            userData.message = "Không tìm thấy user"
+        }
+
         return (userData)
     }
     catch (e) {

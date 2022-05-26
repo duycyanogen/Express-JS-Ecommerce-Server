@@ -26,11 +26,17 @@ let handleLogin = async (req, res) => {
         })
     }
     let userData = await userServices.handleUserLogin(email, password);
-    return res.status(200).json({
-        errCode: userData.errCode,
-        message: userData.message,
-        userData: userData
-    })
+    if (userData.errCode != 0) {
+        return res.status(500).json({
+            ...userData
+        })
+    }
+    else {
+        return res.status(200).json({
+            ...userData
+        })
+    }
+
 
 }
 
@@ -52,7 +58,7 @@ let handleRegis = async (req, res) => {
     let userData = await userServices.insert(user);
     console.log("User", userData);
     return res.status(200).json({
-        userData
+        ...userData
     })
 
 }
@@ -71,7 +77,7 @@ let update = async (req, res) => {
     let userData = await userServices.update(user);
     console.log("User", userData);
     return res.status(200).json({
-        userData
+        ...userData
     })
 
 }

@@ -3,7 +3,7 @@ const sql = require('mssql/msnodesqlv8');
 const config = {
     server: "localhost",
     user: "sa",
-    password: "12",
+    password: "123",
     database: "GUITARSHOP_HDV",
     driver: "msnodesqlv8"
 };

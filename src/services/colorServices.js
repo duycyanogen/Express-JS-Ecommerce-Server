@@ -3,10 +3,10 @@ import { conn, sql } from '../connect';
 let getAll = async() => {
     try {
         let pool = await conn;
-        let sqlString = "select * from [dbo].[Category]";
-        let categorys = await pool.request().query(sqlString);
-        if (categorys)
-            return (categorys.recordsets[0])
+        let sqlString = "select * from [dbo].[Color]";
+        let colors = await pool.request().query(sqlString);
+        if (colors)
+            return (colors.recordsets[0])
         else
             return ([])
     }
@@ -15,22 +15,22 @@ let getAll = async() => {
     }
 }
 
-let getCategoryByidGuitar = async (idGuitar) => {
+let getColorByidGuitar = async (idGuitar) => {
     try {
-        let categoryData = {};
+        let colorData = {};
         let pool = await conn;
-        let categorys = await pool.request()
+        let colors = await pool.request()
             .input('input_parameter', sql.Int, idGuitar)
-            .query("select ca.name from Guitar_Category gca,Category ca where gca.idCategory=ca.id and gca.idGuitar= @input_parameter");
+            .query("select co.name from Guitar_Color gco,Color co where gco.idColor=co.id and gco.idGuitar= @input_parameter");
 
-        if (categorys){
-            categoryData.categorys=categorys.recordsets[0];
-            categoryData.message="ok"
+        if (colors){
+            colorData.colors=colors.recordsets[0];
+            colorData.message="ok"
         }
         else{
-            categoryData.message="Không tìm thấy id guitar"
+            colorData.message="Không tìm thấy id guitar"
         }
-        return categoryData;
+        return colorData;
     }
     catch (e) {
         return (e);
@@ -39,7 +39,7 @@ let getCategoryByidGuitar = async (idGuitar) => {
 }
 
 
-let insert = async (Guitar_Category) => {
+let insert = async (Guitar_Color) => {
     //let trans;
     let regisStatus = {};
     try {
@@ -48,9 +48,9 @@ let insert = async (Guitar_Category) => {
         //trans = (await conn).transaction();
         //trans.begin();
         let result = await pool.request()
-            .input('idGuitar', sql.Int, Guitar_Category.idGuitar)
-            .input('idCategory', sql.Int, Guitar_Category.idCategory)
-            .query("Insert into [dbo].[Guitar_Category] (idGuitar,idCategory) values (@idGuitar,@idCategory)");
+            .input('idGuitar', sql.Int, Guitar_Color.idGuitar)
+            .input('idColor', sql.Int, Guitar_Color.idColor)
+            .query("Insert into [dbo].[Guitar_Color] (idGuitar,idColor) values (@idGuitar,@idColor)");
         regisStatus.errCode = 0;
         regisStatus.message = "Thêm mới thành công!"
         return regisStatus;
@@ -67,7 +67,7 @@ let insert = async (Guitar_Category) => {
 
 
 
-let deleted = async (Guitar_Category) => {
+let deleted = async (Guitar_Color) => {
     //let trans;
     let updateStatus = {};
     try {
@@ -76,9 +76,9 @@ let deleted = async (Guitar_Category) => {
         //trans = (await conn).transaction();
         //trans.begin();
         let result = await pool.request()
-            .input('idGuitar', sql.Int, Guitar_Category.idGuitar)
-            .input('idCategory', sql.Int, Guitar_Category.idCategory)
-            .query("DELETE FROM [dbo].[Guitar_Category]  where idGuitar = @idGuitar and idCategory=@idCategory");
+            .input('idGuitar', sql.Int, Guitar_Color.idGuitar)
+            .input('idColor', sql.Int, Guitar_Color.idColor)
+            .query("DELETE FROM [dbo].[Guitar_Color]  where idGuitar = @idGuitar and idColor=@idColor");
         updateStatus.errCode = 0;
         updateStatus.message = "Thay đổi thông tin thành công!"
         return updateStatus;
@@ -98,7 +98,7 @@ let deleted = async (Guitar_Category) => {
 
 module.exports = {
     getAll: getAll,
-    getCategoryByidGuitar: getCategoryByidGuitar,
+    getColorByidGuitar: getColorByidGuitar,
     insert: insert,
     deleted: deleted
 }

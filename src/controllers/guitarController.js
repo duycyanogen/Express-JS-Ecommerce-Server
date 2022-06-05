@@ -15,13 +15,13 @@ let getAllGuitar = async (req, res) => {
     }
 
 }
-
 let insert = async (req, res) => {
-    let email = req.body.email;
-    let password = req.body.password;
-    let address = req.body.address;
-    let phone = req.body.phone;
-    if (!email || !password || !address || !phone) {
+    let name = req.body.name;
+    let price = req.body.price;
+    let contents = req.body.contents;
+    let discount  = req.body.discount;
+    let views  = req.body.views;
+    if (!name || !price || !contents || (!discount&&!discount==0)||(!views&&!views==0)) {
         return res.status(500).json({
             errCode: 1,
             message: "Vui lòng nhập đủ thông tin!"
@@ -30,7 +30,6 @@ let insert = async (req, res) => {
     let guitar = { ...req.body };
     guitar.created = new Date();
     guitar.isDeleted = 0;
-    guitar.idRole = 1;
     let guitarData = await guitarServices.insert(guitar);
     return res.status(200).json({
         guitarData

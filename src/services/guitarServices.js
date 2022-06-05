@@ -4,7 +4,7 @@ import { conn, sql } from '../connect';
 let getAll = async () => {
     try {
         let pool = await conn;
-        let sqlString = "select * from [dbo].[Guitar] where isDeleted = 0";
+        let sqlString = "select g.id,name,price,contents,discount,views,image from [dbo].[Guitar] g,Image i where g.isDeleted = 0 and g.id=i.idGuitar and g.isDeleted=0";
         let guitars = await pool.request().query(sqlString);
         if (guitars)
             return (guitars.recordsets[0])
@@ -53,8 +53,6 @@ let update = async (Guitar) => {
     try {
 
         let pool = await conn;
-        //trans = (await conn).transaction();
-        //trans.begin();
         let result = await pool.request()
             .input('id', sql.Int, Guitar.id)
             .input('name', sql.NVarChar, Guitar.name)
@@ -63,7 +61,7 @@ let update = async (Guitar) => {
             .input('discount', sql.Decimal, Guitar.discount)
             .input('views', sql.Int, Guitar.views)
             .input('updated', sql.Date, Guitar.updated)
-            .query("Update [dbo].[Guitar] set (name = @name,price = @price,contents=@contents,discount=@discount,views=@views, updated = @updated) where id = @id");
+            .query("Update [dbo].[Guitar] set name = @name,price = @price,contents=@contents,discount=@discount,views=@views, updated = @updated where id = @id");
         updateStatus.errCode = 0;
         updateStatus.message = "Thay đổi thông tin thành công!"
         return updateStatus;
@@ -89,7 +87,7 @@ let deleted = async (Guitar) => {
         //trans.begin();
         let result = await pool.request()
             .input('id', sql.Int, Guitar.id)
-            .query("Update [dbo].[Guitar] set (isDeleted = 1) where id = @id");
+            .query("Update [dbo].[Guitar] set isDeleted = 1 where id = @id");
         updateStatus.errCode = 0;
         updateStatus.message = "Thay đổi thông tin thành công!"
         return updateStatus;

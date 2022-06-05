@@ -2,7 +2,6 @@
 import { conn, sql } from '../connect';
 //var conn = require('../connect')
 let getAll = async () => {
-
     try {
         let pool = await conn;
         let sqlString = "select * from [dbo].[User]";
@@ -115,7 +114,7 @@ let update = async (user) => {
             .input('isDeleted', sql.SmallInt, user.isDeleted)
             .input('idRole', sql.Int, user.idRole)
             .input('updated', sql.Date, user.updated)
-            .query("Update [dbo].[User] set (name = @name,phone = @phone,address=@address,isDeleted=@isDeleted,idRole=@idRole, updated = @updated) where id = @id");
+            .query("Update [dbo].[User] set name = @name,phone = @phone,address=@address,isDeleted=@isDeleted,idRole=@idRole, updated = @updated where id = @id");
         updateStatus.errCode = 0;
         updateStatus.message = "Thay đổi thông tin thành công!"
         return updateStatus;
@@ -141,7 +140,7 @@ let deleted = async (user) => {
         //trans.begin();
         let result = await pool.request()
             .input('id', sql.Int, user.id)
-            .query("Update [dbo].[User] set (isDeleted = 1) where id = @id");
+            .query("Update [dbo].[User] set isDeleted = 1 where id = @id");
         updateStatus.errCode = 0;
         updateStatus.message = "Thay đổi thông tin thành công!"
         return updateStatus;

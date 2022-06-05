@@ -5,12 +5,14 @@ import configViewEngine from './config/viewEngine';
 import initWebRoutes from './route/web';
 import cors from 'cors';
 
+
 require('dotenv').config()
 const app = express();
 app.use(cors({ origin: true }));
 const port = process.env.PORT || 8080;
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static('public'));
 configViewEngine(app);
 initWebRoutes(app);
 

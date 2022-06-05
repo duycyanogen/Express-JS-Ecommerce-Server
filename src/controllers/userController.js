@@ -17,6 +17,7 @@ let getAllUser = async (req, res) => {
 }
 
 let handleLogin = async (req, res) => {
+    console.log(req.body);
     let email = req.body.email;
     let password = req.body.password;
     if (!email || !password) {

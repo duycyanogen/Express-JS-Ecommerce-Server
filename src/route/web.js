@@ -11,16 +11,27 @@ import colorController from '../controllers/colorController'
 import shopCartController from '../controllers/shopCartController'
 import transactionController from '../controllers/transactionController'
 import imageController from '../controllers/imageController'
+import multer from 'multer';
+import sharp from 'sharp';
 import { response } from 'express';
 import { request } from 'https';
 let router = express.Router();
-
+const uploadFolder = path.join(__dirname, "..", "uploads");
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, uploadFolder)
+    },
+    filename: (req, file, cb) => {
+        cb(null, file.originalname)
+    }
+})
+const upload = multer({ storage })
 let initWebRoutes = (app) => {
 
     router.get('/', homeController.getHomePage)
     //guitar
     router.get('/api/v1/guitar', guitarController.getAllGuitar);
-    router.post('/api/v1/guitar/add', guitarController.insert);
+    router.post('/api/v1/guitar/add', upload.single("file"), guitarController.insert);
     router.post('/api/v1/guitar/update', guitarController.update);
     router.post('/api/v1/guitar/delete', guitarController.deleted);
     //user
@@ -70,60 +81,31 @@ let initWebRoutes = (app) => {
     router.post('/api/v1/image/update', imageController.update);
     router.post('/api/v1/image/delete', imageController.deleted);
 
-    //upload image
-    router.post('/api/v1/upload', async (req, res) => {
-
-        const form = new formidable.IncomingForm();
+    router.post('/api/v1/upload', upload.single("file"), (req, res) => {
+        console.log(req.file);
         const uploadFolder = path.join(__dirname, "..", "uploads");
-        form.options.uploadDir = uploadFolder;
-        form.uploadDir = uploadFolder;
-        console.log(form.uploadDir);
-        form.options.keepExtensions = true;
-        form.options.maxFieldSizes = 10 * 1024 * 1024;
-        form.options.multiples = true;
-        form.parse(req, (err, fields, files) => {
-            //console.log(files);
+        let imageName = `${uploadFolder}\\${req.file.filename}`;
+        sharp(imageName).resize(600, 600).toFile(imageName.split('.')[0] + "_600x600." + imageName.split('.')[1], function (err) {
             if (err) {
                 res.json({
-                    result: "Lỗi",
-                    data: {},
-                    message: `Không thể upload file, ${err}`
+                    result: "failed",
+                    message: `Upload thất bại! ${err}`
                 })
-                return;
-
             }
-            else {
-                let arrayOfFile = files[""];
-                if (arrayOfFile.length > 0) {
-                    let fileNames = [];
-                    arrayOfFile.forEach((file) => {
-                        fileNames.push(file.newFilename);
-                    })
-                    res.json({
-                        result: "ok",
-                        data: fileNames,
-                        numberOfImages: fileNames.length,
-                        message: `Upload file thành công!`
-                    })
-                }
-                else {
-                    res.json({
-                        result: "Lỗi",
-                        data: {},
-                        numberOfImages: 0,
-                        message: `Không có file nào được upload`
-                    })
-                }
-            }
+        })
+        res.json({
+            result: "ok",
+            message: `Upload file thành công!`
         })
 
     })
 
     router.get('/api/v1/image1', async (req, res) => {
-        const uploadFolder = path.join(__dirname, "..", "uploads");
-        let imageName = `${uploadFolder}\\${req.body.imageName}`;
-        console.log(imageName);
+
         try {
+            const uploadFolder = path.join(__dirname, "..", "uploads");
+            let imageName = `${uploadFolder}\\${req.query.imageName}`;
+            console.log(req.query)
             fs.readFile(imageName, (err, imageData) => {
                 if (err) {
                     console.log(err);
@@ -133,6 +115,7 @@ let initWebRoutes = (app) => {
                         numberOfImages: 0,
                         message: `Lỗi đọc file!`
                     })
+                    return;
                 }
                 res.writeHead(200, { 'Content-Type': 'image/jpeg' });
                 res.end(imageData);

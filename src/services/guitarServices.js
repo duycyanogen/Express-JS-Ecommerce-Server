@@ -18,7 +18,7 @@ let getAll = async () => {
 
 let insert = async (Guitar) => {
     //let trans;
-    let regisStatus = {};
+    let data = {};
     try {
 
         let pool = await conn;
@@ -32,20 +32,33 @@ let insert = async (Guitar) => {
             .input('views', sql.Int, Guitar.views)
             .input('created', sql.Date, Guitar.created)
             .input('isDeleted', sql.SmallInt, Guitar.isDeleted)
-            .query("Insert into [dbo].[Guitar] (name,price,contents,discount,views,created,isDeleted) values (@name,@price,@contents,@discount,@views,@created,@isDeleted)");
-        regisStatus.errCode = 0;
-        regisStatus.message = "Thêm mới thành công!"
-        return regisStatus;
+            .query("Insert into [dbo].[Guitar] (name,price,contents,discount,views,created,isDeleted) "
+                + "OUTPUT INSERTED.ID "
+                + "values (@name,@price,@contents,@discount,@views,@created,@isDeleted)");
+        data.guitarID = Object.values(...result.recordset)[0];
+        if (data.guitarID) {
+            await pool.request()
+                .input('idGuitar', sql.Int, data.guitarID)
+                .input('image', sql.NVarChar, Guitar.fileName)
+                .input('imgDetail', sql.NVarChar, null)
+                .input('isDeleted', sql.SmallInt, 0)
+                .query("Insert into [dbo].[Image] (idGuitar,image,imgDetail,isDeleted) values (@idGuitar,@image,@imgDetail,@isDeleted)");
+        }
+
+        data.errCode = 0;
+        data.message = "Thêm mới thành công!"
+        return data;
     }
     catch (e) {
-        regisStatus.errCode = 1;
-        regisStatus.message = e.message.substring(0, 100);
-        return regisStatus;
+        data.errCode = 1;
+        data.message = e.message.substring(0, 100);
+        return data;
         //trans.rollback();
 
     }
 
 }
+
 
 let update = async (Guitar) => {
     //let trans;

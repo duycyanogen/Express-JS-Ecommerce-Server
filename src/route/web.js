@@ -12,6 +12,7 @@ import shopCartController from '../controllers/shopCartController'
 import transactionController from '../controllers/transactionController'
 import imageController from '../controllers/imageController'
 import { response } from 'express';
+import { request } from 'https';
 let router = express.Router();
 
 let initWebRoutes = (app) => {
@@ -74,18 +75,12 @@ let initWebRoutes = (app) => {
 
         const form = new formidable.IncomingForm();
         const uploadFolder = path.join(__dirname, "..", "uploads");
-        console.log(uploadFolder);
         form.options.uploadDir = uploadFolder;
         form.uploadDir = uploadFolder;
-        //form.keepExtensions = true;
+        console.log(form.uploadDir);
         form.options.keepExtensions = true;
         form.options.maxFieldSizes = 10 * 1024 * 1024;
         form.options.multiples = true;
-        console.log(form);
-        // form.on('file', function (field, file) {
-        //     //rename the incoming file to the file's name
-        //     fs.rename(file.path, form.uploadDir + "/" + file.name + ".jpg");
-        // });
         form.parse(req, (err, fields, files) => {
             //console.log(files);
             if (err) {
@@ -98,15 +93,11 @@ let initWebRoutes = (app) => {
 
             }
             else {
-                console.log("--------------------------------------")
-
                 let arrayOfFile = files[""];
-                //console.log("obj File", arrayOfFile)
-                //console.log(arrayOfFile);
                 if (arrayOfFile.length > 0) {
                     let fileNames = [];
                     arrayOfFile.forEach((file) => {
-                        fileNames.push(file.path);
+                        fileNames.push(file.newFilename);
                     })
                     res.json({
                         result: "ok",
@@ -125,6 +116,35 @@ let initWebRoutes = (app) => {
                 }
             }
         })
+
+    })
+
+    router.get('/api/v1/image1', async (req, res) => {
+        const uploadFolder = path.join(__dirname, "..", "uploads");
+        let imageName = `${uploadFolder}\\${req.body.imageName}`;
+        console.log(imageName);
+        try {
+            fs.readFile(imageName, (err, imageData) => {
+                if (err) {
+                    console.log(err);
+                    res.json({
+                        result: "Lỗi",
+                        data: {},
+                        numberOfImages: 0,
+                        message: `Lỗi đọc file!`
+                    })
+                }
+                res.writeHead(200, { 'Content-Type': 'image/jpeg' });
+                res.end(imageData);
+            })
+        } catch (error) {
+            res.json({
+                result: "Lỗi",
+                data: {},
+                numberOfImages: 0,
+                message: `Lỗi đọc file! + ${error}`
+            })
+        }
 
     })
 

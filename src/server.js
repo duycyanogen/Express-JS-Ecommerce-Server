@@ -9,7 +9,6 @@ require('dotenv').config()
 const app = express();
 app.use(cors({ origin: true }));
 const port = process.env.PORT || 8080;
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 configViewEngine(app);

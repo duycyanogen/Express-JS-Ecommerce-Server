@@ -45,7 +45,9 @@ let handleRegis = async (req, res) => {
     let password = req.body.password;
     let address = req.body.address;
     let phone = req.body.phone;
-    if (!email || !password || !address || !phone) {
+    let name = req.body.name;
+    console.log(req.body);
+    if (!email || !password || !address || !phone || !name) {
         return res.status(500).json({
             errCode: 1,
             message: "Vui lòng nhập đủ thông tin!"

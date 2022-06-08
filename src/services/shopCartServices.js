@@ -20,7 +20,7 @@ let getShopCartByUserID = async (userID) => {
         let pool = await conn;
         let shopCarts = await pool.request()
             .input('input_parameter', sql.Int, userID)
-            .query("select * from ShopCart where userID=@input_parameter and isOrdered=0");
+            .query("select sc.id ,userID ,idGuitar,g.name as guitarName,quantity,amount,sc.created,sc.updated from ShopCart sc,Guitar g where sc.idGuitar=g.id and userID=@input_parameter and isOrdered=0");
 
         if (shopCarts){
             cartsData.shopCarts=shopCarts.recordsets[0];
@@ -38,11 +38,22 @@ let getShopCartByUserID = async (userID) => {
 }
 
 let insert = async (ShopCart) => {
-    let regisStatus = {};
-    try {
 
+    let Status = {};
+    try {
+        
         let pool = await conn;
-        let result = await pool.request()
+        let value = await pool.request()
+            .input('userID', sql.Int, ShopCart.userID)
+            .input('idGuitar', sql.Int, ShopCart.idGuitar)
+            .query("select COUNT(*)as count from ShopCart where userID=@userID and idGuitar=@idGuitar");
+        if(value.recordsets[0][0].count>0){
+            let update = await pool.request()
+            .input('userID', sql.Int, ShopCart.userID)
+            .input('idGuitar', sql.Int, ShopCart.idGuitar)
+            .query("Update [dbo].[ShopCart] set amount=amount+(amount/quantity),quantity=(quantity+1) where userID=@userID and idGuitar=@idGuitar and isOrdered=0");
+        }else{
+            let result = await pool.request()
             .input('userID', sql.Int, ShopCart.userID)
             .input('idGuitar', sql.Int, ShopCart.idGuitar)
             .input('quantity', sql.Int, ShopCart.quantity)
@@ -51,14 +62,16 @@ let insert = async (ShopCart) => {
             .input('updated', sql.Date, ShopCart.updated)
             .input('isOrdered', sql.SmallInt, ShopCart.isOrdered)
             .query("Insert into [dbo].[ShopCart] (userID,idGuitar,quantity,amount,created,updated,isOrdered) values (@userID,@idGuitar,@quantity,@amount,@created,@updated,@isOrdered)");
-        regisStatus.errCode = 0;
-        regisStatus.message = "Thêm mới thành công!"
-        return regisStatus;
+        }
+        
+        cartStatus.errCode = 0;
+        cartStatus.message = "Thêm mới thành công!"
+        return cartStatus;
     }
     catch (e) {
-        regisStatus.errCode = 1;
-        regisStatus.message = e.message.substring(0, 100);
-        return regisStatus;
+        cartStatus.errCode = 1;
+        cartStatus.message = e.message.substring(0, 100);
+        return cartStatus;
 
     }
 
@@ -105,7 +118,7 @@ let deleted = async (ShopCart) => {
         //trans.begin();
         let result = await pool.request()
             .input('id', sql.Int, ShopCart.id)
-            .query("Update [dbo].[ShopCart] set isOrdered = 1 where id = @id");
+            .query("DELETE FROM ShopCart WHERE id=@id");
         updateStatus.errCode = 0;
         updateStatus.message = "Thay đổi thông tin thành công!"
         return updateStatus;

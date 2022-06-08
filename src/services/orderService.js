@@ -16,7 +16,7 @@ let getAll = async () => {
 }
 
 let insert = async (Order) => {
-    let regisStatus = {};
+    let orderStatus = {};
     try {
 
         let pool = await conn;
@@ -30,14 +30,14 @@ let insert = async (Order) => {
             .input('status', sql.SmallInt, Order.status)
             .input('isCanceled', sql.SmallInt, Order.isCanceled)
             .query("Insert into [dbo].[Order] (transactionID,idGuitar,quantity,amount,created,updated,status,isCanceled) values (@transactionID,@idGuitar,@quantity,@amount,@created,@updated,@status,@isCanceled)");
-        regisStatus.errCode = 0;
-        regisStatus.message = "Thêm mới thành công!"
-        return regisStatus;
+        orderStatus.errCode = 0;
+        orderStatus.message = "Thêm mới thành công!"
+        return orderStatus;
     }
     catch (e) {
-        regisStatus.errCode = 1;
-        regisStatus.message = e.message.substring(0, 100);
-        return regisStatus;
+        orderStatus.errCode = 1;
+        orderStatus.message = e.message.substring(0, 100);
+        return orderStatus;
 
     }
 

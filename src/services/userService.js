@@ -85,7 +85,9 @@ let insert = async (user) => {
             .input('updated', sql.Date, user.updated)
             .input('isDeleted', sql.SmallInt, user.isDeleted)
             .input('idRole', sql.Int, user.idRole)
-            .query("Insert into [dbo].[User] (name,email,phone,address,password,created,updated,isDeleted,idRole) values (@name,@email,@phone,@address,@password,@created,@updated,@isDeleted,@idRole)");
+            .query("Insert into [dbo].[User] (name,email,phone,address,password,created,updated,isDeleted,idRole) values (@name,@email,@phone,@address,@password,@created,@updated,@isDeleted,@idRole)"
+            + "OUTPUT INSERTED.ID "
+            + "values (@name,@email,@phone,@address,@password,@created,@updated,@isDeleted,@idRole)");
         regisStatus.errCode = 0;
         regisStatus.message = "Đăng kí tài khoản thành công!"
         return regisStatus;

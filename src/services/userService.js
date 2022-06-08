@@ -88,6 +88,7 @@ let insert = async (user) => {
             .query("Insert into [dbo].[User] (name,email,phone,address,password,created,updated,isDeleted,idRole) values (@name,@email,@phone,@address,@password,@created,@updated,@isDeleted,@idRole)"
             + "OUTPUT INSERTED.ID "
             + "values (@name,@email,@phone,@address,@password,@created,@updated,@isDeleted,@idRole)");
+        regisStatus.userID = Object.values(...result.recordset)[0];
         regisStatus.errCode = 0;
         regisStatus.message = "Đăng kí tài khoản thành công!"
         return regisStatus;

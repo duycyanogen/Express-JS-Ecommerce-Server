@@ -55,8 +55,10 @@ let insert = async (Transaction) => {
             .input('status', sql.SmallInt, Transaction.status)
             .input('note', sql.NVarChar, Transaction.note)
             .input('isCanceled', sql.SmallInt, Transaction.isCanceled)
-            .query("Insert into [dbo].[Transaction] (userID,customerName,customerEmail,customerPhone,customerAddress,amount,message,created,updated,status,note,isCanceled) values (@userID,@customerName,@customerEmail,@customerPhone,@customerAddress,@amount,@message,@created,@updated,@status,@note,@isCanceled)");
-        console.log(result);
+            .query("Insert into [dbo].[Transaction] (userID,customerName,customerEmail,customerPhone,customerAddress,amount,message,created,updated,status,note,isCanceled) "
+                + "OUTPUT INSERTED.ID "
+                + "values (@userID,@customerName,@customerEmail,@customerPhone,@customerAddress,@amount,@message,@created,@updated,@status,@note,@isCanceled)");
+        tranStatus.transactionID=Object.values(...result.recordset)[0];
         tranStatus.errCode = 0;
         tranStatus.message = "Thêm mới thành công!"
         return tranStatus;

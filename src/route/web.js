@@ -4,7 +4,6 @@ import guitarController from '../controllers/guitarController'
 import userController from '../controllers/userController'
 import orderController from '../controllers/orderController'
 import categoryController from '../controllers/categoryController'
-import colorController from '../controllers/colorController'
 import shopCartController from '../controllers/shopCartController'
 import transactionController from '../controllers/transactionController'
 import imageController from '../controllers/imageController'
@@ -30,7 +29,8 @@ let initWebRoutes = (app) => {
     router.post('/api/v1/order/add', orderController.insert);
     router.post('/api/v1/order/update', orderController.update);
     router.post('/api/v1/order/delete', orderController.deleted);
-
+    router.post('/api/v1/getOrder', orderController.getOrderByUserID);
+    router.post('/api/v1/cancelOrder', orderController.cancelByID);
     //shopcart
     router.get('/api/v1/cart',shopCartController.getAllShopCart);
     router.post('/api/v1/cart/add', shopCartController.insert);
@@ -52,11 +52,6 @@ let initWebRoutes = (app) => {
     router.post('/api/v1/category/add', categoryController.insert);
     router.post('/api/v1/category/delete', categoryController.deleted);
     
-    //color
-    router.get('/api/v1/color', colorController.getAllColor);
-    router.post('/api/v1/getColor', colorController.getColor);
-    router.post('/api/v1/color/add', colorController.insert);
-    router.post('/api/v1/color/delete', colorController.deleted);
 
     //image
     router.get('/api/v1/image', imageController.getAllImage);

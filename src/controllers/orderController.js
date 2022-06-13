@@ -15,6 +15,21 @@ let getAllOrder = async (req, res) => {
 
 }
 
+let getOrderByUserID = async (req, res) => {
+    let userID = req.body.userID;
+    if (!userID) {
+        return res.status(500).json({
+            errCode: 1,
+            message: "Không đủ thông tin!"
+        })
+    }
+    let orderData = await orderServices.getOrderByUserID(userID);
+    return res.status(200).json({
+        message: orderData.message,
+        orderData: orderData.orders
+    })
+
+}
 
 let insert = async (req, res) => {
     let transactionID = req.body.transactionID;
@@ -56,7 +71,21 @@ let update = async (req, res) => {
     })
 
 }
+let cancelByID = async (req, res) => {
 
+    let id = req.body.id;
+    if (!id) {
+        return res.status(500).json({
+            errCode: 1,
+            message: "Vui lòng nhập id!"
+        })
+    }
+    let orderData = await orderServices.cancelByID(id);
+    return res.status(200).json({
+        orderData
+    })
+
+}
 let deleted = async (req, res) => {
     let id = req.body.id;
     if (!id) {
@@ -75,7 +104,9 @@ let deleted = async (req, res) => {
 
 module.exports = {
     getAllOrder: getAllOrder,
+    getOrderByUserID:getOrderByUserID,
     insert: insert,
     update: update,
+    cancelByID:cancelByID,
     deleted: deleted
 }

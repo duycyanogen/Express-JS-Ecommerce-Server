@@ -64,14 +64,14 @@ let insert = async (ShopCart) => {
             .query("Insert into [dbo].[ShopCart] (userID,idGuitar,quantity,amount,created,updated,isOrdered) values (@userID,@idGuitar,@quantity,@amount,@created,@updated,@isOrdered)");
         }
         
-        cartStatus.errCode = 0;
-        cartStatus.message = "Thêm mới thành công!"
-        return cartStatus;
+        Status.errCode = 0;
+        Status.message = "Thêm mới thành công!"
+        return Status;
     }
     catch (e) {
-        cartStatus.errCode = 1;
-        cartStatus.message = e.message.substring(0, 100);
-        return cartStatus;
+        Status.errCode = 1;
+        Status.message = e.message.substring(0, 100);
+        return Status;
 
     }
 

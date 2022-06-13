@@ -14,6 +14,28 @@ let getAll = async () => {
         return (null);
     }
 }
+let getOrderByUserID = async (userID) => {
+    try {
+        let orderData = {};
+        let pool = await conn;
+        let orders = await pool.request()
+            .input('input_parameter', sql.Int, userID)
+            .query("select ord.*,g.name,trans.isCanceled as UserCanceled from [Order] ord,[Transaction] trans,Guitar g where ord.transactionID=trans.id and ord.idGuitar=g.id and trans.userID=@input_parameter");
+
+        if (orders){
+            orderData.orders=orders.recordsets[0];
+            orderData.message="ok"
+        }
+        else{
+            orderData.message="Không tìm thấy user ID"
+        }
+        return orderData;
+    }
+    catch (e) {
+        return (e);
+    }
+
+}
 
 let insert = async (Order) => {
     let orderStatus = {};
@@ -74,6 +96,27 @@ let update = async (Order) => {
 
 }
 
+let cancelByID = async (id) => {
+    //let trans;
+    let updateStatus = {};
+    try {
+        let pool = await conn;
+        let result = await pool.request()
+            .input('id', sql.Int, id)
+            .query("Update [dbo].[Order] set isCanceled=1 where id = @id");
+        updateStatus.errCode = 0;
+        updateStatus.message = "Thay đổi thông tin thành công!"
+        return updateStatus;
+    }
+    catch (e) {
+        updateStatus.errCode = 1;
+        updateStatus.message = e.message.substring(0, 100);
+        return updateStatus;
+        //trans.rollback();
+
+    }
+
+}
 
 let deleted = async (Order) => {
     //let trans;
@@ -104,7 +147,9 @@ let deleted = async (Order) => {
 
 module.exports = {
     getAll: getAll,
+    getOrderByUserID:getOrderByUserID,
     insert: insert,
     update: update,
+    cancelByID:cancelByID,
     deleted: deleted
 }

@@ -54,7 +54,6 @@ let handleRegis = async (req, res) => {
     return res.status(200).json({
         userData
     })
-
 }
 
 let update = async (req, res) => {

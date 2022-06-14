@@ -116,10 +116,11 @@ let update = async (user) => {
             .input('name', sql.NVarChar, user.name)
             .input('phone', sql.NVarChar, user.phone)
             .input('address', sql.NVarChar, user.address)
+            .input('password', sql.NVarChar, user.password)
             .input('isDeleted', sql.SmallInt, user.isDeleted)
             .input('idRole', sql.Int, user.idRole)
             .input('updated', sql.Date, user.updated)
-            .query("Update [dbo].[User] set name = @name,phone = @phone,address=@address,isDeleted=@isDeleted,idRole=@idRole, updated = @updated where id = @id");
+            .query("Update [dbo].[User] set name = @name,phone = @phone,address=@address,password=@password,isDeleted=@isDeleted,idRole=@idRole, updated = @updated where id = @id");
         updateStatus.errCode = 0;
         updateStatus.message = "Thay đổi thông tin thành công!"
         return updateStatus;

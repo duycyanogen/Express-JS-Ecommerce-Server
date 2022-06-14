@@ -17,6 +17,7 @@ let getAllUser = async (req, res) => {
 }
 
 let handleLogin = async (req, res) => {
+    console.log(req.body);
     let email = req.body.email;
     let password = req.body.password;
     if (!email || !password) {
@@ -26,11 +27,17 @@ let handleLogin = async (req, res) => {
         })
     }
     let userData = await userServices.handleUserLogin(email, password);
-    return res.status(200).json({
-        errCode: userData.errCode,
-        message: userData.message,
-        userData: userData
-    })
+    if (userData.errCode != 0) {
+        return res.status(500).json({
+            ...userData
+        })
+    }
+    else {
+        return res.status(200).json({
+            ...userData
+        })
+    }
+
 
 }
 
@@ -39,7 +46,9 @@ let handleRegis = async (req, res) => {
     let password = req.body.password;
     let address = req.body.address;
     let phone = req.body.phone;
-    if (!email || !password || !address || !phone) {
+    let name = req.body.name;
+    console.log(req.body);
+    if (!email || !password || !address || !phone || !name) {
         return res.status(500).json({
             errCode: 1,
             message: "Vui lòng nhập đủ thông tin!"
@@ -52,7 +61,7 @@ let handleRegis = async (req, res) => {
     let userData = await userServices.insert(user);
     console.log("User", userData);
     return res.status(200).json({
-        userData
+        ...userData
     })
 }
 
@@ -70,7 +79,7 @@ let update = async (req, res) => {
     let userData = await userServices.update(user);
     console.log("User", userData);
     return res.status(200).json({
-        userData
+        ...userData
     })
 
 }

@@ -1,14 +1,23 @@
 import guitarServices from '../services/guitarServices';
+import path from 'path';
+import sharp from 'sharp';
 //var guitarServices = require('../services/guitarServices');
 let getAllGuitar = async (req, res) => {
     try {
         let guitars = await guitarServices.getAll();
+        guitars = guitars.map((guitar) => {
+            return {
+                ...guitar,
+                imageURL: `http://localhost:8889/api/v1/image1?imageName=${guitar.image?.split('.')[0]}_600x600.jpg`
+            }
+        })
         return res.status(200).json({
             message: "OK",
             data: guitars
         })
     }
     catch (e) {
+        console.log(e);
         return res.status(500).json({
             message: e,
         })
@@ -16,21 +25,40 @@ let getAllGuitar = async (req, res) => {
 
 }
 let insert = async (req, res) => {
+    const uploadFolder = path.join(__dirname, "..", "uploads");
+    let imageName = `${uploadFolder}\\${req.file.filename}`;
+    sharp(imageName).resize(600, 600).toFile(imageName.split('.')[0] + "_600x600." + imageName.split('.')[1], function (err) {
+        if (err) {
+            res.json({
+                result: "failed",
+                message: `Upload thất bại! ${err}`
+            })
+        }
+    })
+    res.json({
+        result: "ok",
+        message: `Upload file thành công!`
+    })
+
+
     let name = req.body.name;
     let price = req.body.price;
     let contents = req.body.contents;
-    let discount  = req.body.discount;
-    let views  = req.body.views;
-    if (!name || !price || !contents || (!discount&&!discount==0)||(!views&&!views==0)) {
+    let discount = req.body.discount;
+    let views = req.body.views;
+    if (!name || !price || !contents || (!discount && !discount == 0) || (!views && !views == 0)) {
         return res.status(500).json({
             errCode: 1,
             message: "Vui lòng nhập đủ thông tin!"
         })
     }
+    console.log(req.body);
+    req.body.fileName = req.file.filename;
     let guitar = { ...req.body };
     guitar.created = new Date();
     guitar.isDeleted = 0;
     let guitarData = await guitarServices.insert(guitar);
+    console.log("test", guitarData);
     return res.status(200).json({
         guitarData
     })

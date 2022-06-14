@@ -38,7 +38,7 @@ let getTransactionByUserID = async (userID) => {
 }
 
 let insert = async (Transaction) => {
-    let regisStatus = {};
+    let tranStatus = {};
     try {
 
         let pool = await conn;
@@ -55,15 +55,18 @@ let insert = async (Transaction) => {
             .input('status', sql.SmallInt, Transaction.status)
             .input('note', sql.NVarChar, Transaction.note)
             .input('isCanceled', sql.SmallInt, Transaction.isCanceled)
-            .query("Insert into [dbo].[Transaction] (userID,customerName,customerEmail,customerPhone,customerAddress,amount,message,created,updated,status,note,isCanceled) values (@userID,@customerName,@customerEmail,@customerPhone,@customerAddress,@amount,@message,@created,@updated,@status,@note,@isCanceled)");
-        regisStatus.errCode = 0;
-        regisStatus.message = "Thêm mới thành công!"
-        return regisStatus;
+            .query("Insert into [dbo].[Transaction] (userID,customerName,customerEmail,customerPhone,customerAddress,amount,message,created,updated,status,note,isCanceled) "
+                + "OUTPUT INSERTED.ID "
+                + "values (@userID,@customerName,@customerEmail,@customerPhone,@customerAddress,@amount,@message,@created,@updated,@status,@note,@isCanceled)");
+        tranStatus.transactionID=Object.values(...result.recordset)[0];
+        tranStatus.errCode = 0;
+        tranStatus.message = "Thêm mới thành công!"
+        return tranStatus;
     }
     catch (e) {
-        regisStatus.errCode = 1;
-        regisStatus.message = e.message.substring(0, 100);
-        return regisStatus;
+        tranStatus.errCode = 1;
+        tranStatus.message = e.message.substring(0, 100);
+        return tranStatus;
 
     }
 

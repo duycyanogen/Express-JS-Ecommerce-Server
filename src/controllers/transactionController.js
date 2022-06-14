@@ -75,6 +75,8 @@ let update = async (req, res) => {
 
 }
 
+
+
 let deleted = async (req, res) => {
     let id = req.body.id;
     if (!id) {

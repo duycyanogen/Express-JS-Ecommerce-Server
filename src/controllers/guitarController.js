@@ -37,10 +37,8 @@ let insert = async (req, res) => {
     })
     res.json({
         result: "ok",
-        message: `Upload file thành công!`
+        message: `Thêm mới sản phẩm thành công!`
     })
-
-
     let name = req.body.name;
     let price = req.body.price;
     let contents = req.body.contents;
@@ -52,13 +50,11 @@ let insert = async (req, res) => {
             message: "Vui lòng nhập đủ thông tin!"
         })
     }
-    console.log(req.body);
     req.body.fileName = req.file.filename;
     let guitar = { ...req.body };
     guitar.created = new Date();
     guitar.isDeleted = 0;
     let guitarData = await guitarServices.insert(guitar);
-    console.log("test", guitarData);
     return res.status(200).json({
         guitarData
     })
@@ -77,7 +73,6 @@ let update = async (req, res) => {
     let guitar = { ...req.body };
     guitar.updated = new Date();
     let guitarData = await guitarServices.update(guitar);
-    console.log("guitar", guitarData);
     return res.status(200).json({
         guitarData
     })

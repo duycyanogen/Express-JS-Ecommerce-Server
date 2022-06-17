@@ -47,6 +47,7 @@ let initWebRoutes = (app) => {
     router.post('/api/v1/order/delete', orderController.deleted);
     router.post('/api/v1/getOrder', orderController.getOrderByUserID);
     router.post('/api/v1/cancelOrder', orderController.cancelByID);
+    router.post('/api/v1/confirmOrder', orderController.confirmByID);
     //shopcart
     router.get('/api/v1/cart', shopCartController.getAllShopCart);
     router.post('/api/v1/cart/add', shopCartController.insert);

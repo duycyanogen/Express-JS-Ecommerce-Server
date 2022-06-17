@@ -25,39 +25,44 @@ let getAllGuitar = async (req, res) => {
 
 }
 let insert = async (req, res) => {
-    const uploadFolder = path.join(__dirname, "..", "uploads");
-    let imageName = `${uploadFolder}\\${req.file.filename}`;
-    sharp(imageName).resize(600, 600).toFile(imageName.split('.')[0] + "_600x600." + imageName.split('.')[1], function (err) {
-        if (err) {
-            res.json({
-                result: "failed",
-                message: `Upload thất bại! ${err}`
+    try {
+        const uploadFolder = path.join(__dirname, "..", "uploads");
+        let imageName = `${uploadFolder}\\${req.file.filename}`;
+        sharp(imageName).resize(600, 600).toFile(imageName.split('.')[0] + "_600x600." + imageName.split('.')[1], function (err) {
+            if (err) {
+                res.json({
+                    result: "failed",
+                    message: `Upload thất bại! ${err}`
+                })
+            }
+        })
+        // res.status(200).json({
+        //     result: "ok",
+        //     message: `Thêm mới sản phẩm thành công!`
+        // })
+        let name = req.body.name;
+        let price = req.body.price;
+        let contents = req.body.contents;
+        let discount = req.body.discount;
+        let views = req.body.views;
+        if (!name || !price || !contents || (!discount && !discount == 0) || (!views && !views == 0)) {
+            return res.status(500).json({
+                errCode: 1,
+                message: "Vui lòng nhập đủ thông tin!"
             })
         }
-    })
-    res.json({
-        result: "ok",
-        message: `Thêm mới sản phẩm thành công!`
-    })
-    let name = req.body.name;
-    let price = req.body.price;
-    let contents = req.body.contents;
-    let discount = req.body.discount;
-    let views = req.body.views;
-    if (!name || !price || !contents || (!discount && !discount == 0) || (!views && !views == 0)) {
-        return res.status(500).json({
-            errCode: 1,
-            message: "Vui lòng nhập đủ thông tin!"
+        req.body.fileName = req.file.filename;
+        let guitar = { ...req.body };
+        guitar.created = new Date();
+        guitar.isDeleted = 0;
+        let guitarData = await guitarServices.insert(guitar);
+        return res.status(200).json({
+            guitarData
         })
+    } catch (error) {
+        console.log(error);
     }
-    req.body.fileName = req.file.filename;
-    let guitar = { ...req.body };
-    guitar.created = new Date();
-    guitar.isDeleted = 0;
-    let guitarData = await guitarServices.insert(guitar);
-    return res.status(200).json({
-        guitarData
-    })
+
 
 }
 

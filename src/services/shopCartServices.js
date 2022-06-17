@@ -20,14 +20,14 @@ let getShopCartByUserID = async (userID) => {
         let pool = await conn;
         let shopCarts = await pool.request()
             .input('input_parameter', sql.Int, userID)
-            .query("select sc.id ,userID ,idGuitar,g.name as guitarName,quantity,amount,sc.created,sc.updated from ShopCart sc,Guitar g where sc.idGuitar=g.id and userID=@input_parameter and isOrdered=0");
+            .query("select image, g.price, sc.id ,userID , sc.idGuitar,g.name as guitarName,quantity,amount,sc.created,sc.updated from ShopCart sc,Guitar g, Image i where sc.idGuitar=g.id and g.id = i.idGuitar and userID=@input_parameter and isOrdered=0");
 
-        if (shopCarts){
-            cartsData.shopCarts=shopCarts.recordsets[0];
-            cartsData.message="ok"
+        if (shopCarts) {
+            cartsData.shopCarts = shopCarts.recordsets[0];
+            cartsData.message = "ok"
         }
-        else{
-            cartsData.message="Không tìm thấy user ID"
+        else {
+            cartsData.message = "Không tìm thấy user ID"
         }
         return cartsData;
     }
@@ -41,29 +41,29 @@ let insert = async (ShopCart) => {
 
     let Status = {};
     try {
-        
+
         let pool = await conn;
         let value = await pool.request()
             .input('userID', sql.Int, ShopCart.userID)
             .input('idGuitar', sql.Int, ShopCart.idGuitar)
             .query("select COUNT(*)as count from ShopCart where userID=@userID and idGuitar=@idGuitar");
-        if(value.recordsets[0][0].count>0){
+        if (value.recordsets[0][0].count > 0) {
             let update = await pool.request()
-            .input('userID', sql.Int, ShopCart.userID)
-            .input('idGuitar', sql.Int, ShopCart.idGuitar)
-            .query("Update [dbo].[ShopCart] set amount=amount+(amount/quantity),quantity=(quantity+1) where userID=@userID and idGuitar=@idGuitar and isOrdered=0");
-        }else{
+                .input('userID', sql.Int, ShopCart.userID)
+                .input('idGuitar', sql.Int, ShopCart.idGuitar)
+                .query("Update [dbo].[ShopCart] set amount=amount+(amount/quantity),quantity=(quantity+1) where userID=@userID and idGuitar=@idGuitar and isOrdered=0");
+        } else {
             let result = await pool.request()
-            .input('userID', sql.Int, ShopCart.userID)
-            .input('idGuitar', sql.Int, ShopCart.idGuitar)
-            .input('quantity', sql.Int, ShopCart.quantity)
-            .input('amount', sql.Decimal, ShopCart.amount)
-            .input('created', sql.Date, ShopCart.created)
-            .input('updated', sql.Date, ShopCart.updated)
-            .input('isOrdered', sql.SmallInt, ShopCart.isOrdered)
-            .query("Insert into [dbo].[ShopCart] (userID,idGuitar,quantity,amount,created,updated,isOrdered) values (@userID,@idGuitar,@quantity,@amount,@created,@updated,@isOrdered)");
+                .input('userID', sql.Int, ShopCart.userID)
+                .input('idGuitar', sql.Int, ShopCart.idGuitar)
+                .input('quantity', sql.Int, ShopCart.quantity)
+                .input('amount', sql.Decimal, ShopCart.amount)
+                .input('created', sql.Date, ShopCart.created)
+                .input('updated', sql.Date, ShopCart.updated)
+                .input('isOrdered', sql.SmallInt, ShopCart.isOrdered)
+                .query("Insert into [dbo].[ShopCart] (userID,idGuitar,quantity,amount,created,updated,isOrdered) values (@userID,@idGuitar,@quantity,@amount,@created,@updated,@isOrdered)");
         }
-        
+
         Status.errCode = 0;
         Status.message = "Thêm mới thành công!"
         return Status;
@@ -137,7 +137,7 @@ let deleted = async (ShopCart) => {
 
 module.exports = {
     getAll: getAll,
-    getShopCartByUserID:getShopCartByUserID,
+    getShopCartByUserID: getShopCartByUserID,
     insert: insert,
     update: update,
     deleted: deleted

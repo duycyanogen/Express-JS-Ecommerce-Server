@@ -96,7 +96,7 @@ let deleted = async (req, res) => {
     let userData = await userServices.deleted(user);
     console.log("User", userData);
     return res.status(200).json({
-        userData
+        ...userData
     })
 }
 

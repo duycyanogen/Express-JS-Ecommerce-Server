@@ -4,7 +4,7 @@ import { conn, sql } from '../connect';
 let getAll = async () => {
     try {
         let pool = await conn;
-        let sqlString = "select * from [dbo].[User]";
+        let sqlString = "select u.*,r.roleName from [dbo].[User] u, Role r where u.idRole=r.id and u.isDeleted=0";
         let users = await pool.request().query(sqlString);
         console.log("users", users)
         if (users)
@@ -23,7 +23,7 @@ let findByEmail = async (email) => {
         let pool = await conn;
         let users = await pool.request()
             .input('input_parameter', sql.NVarChar, email)
-            .query("SELECT * from [dbo].[User] where email = @input_parameter");
+            .query("SELECT * from [dbo].[User] where email = @input_parameter and isDeleted=0");
 
         if (users)
             return (users.recordsets[0][0])

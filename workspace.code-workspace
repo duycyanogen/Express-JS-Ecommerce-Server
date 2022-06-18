@@ -8,6 +8,9 @@
 		},
 		{
 			"path": "..\\AirbnbTemplate"
+		},
+		{
+			"path": "..\\concept"
 		}
 	],
 	"settings": {}

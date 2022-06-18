@@ -107,6 +107,30 @@ let update = async (ShopCart) => {
 
 }
 
+let updateIsOrdered = async (id) => {
+    //let trans;
+    let updateStatus = {};
+    try {
+        let pool = await conn;
+        //trans = (await conn).transaction();
+        //trans.begin();
+        let result = await pool.request()
+            .input('id', sql.Int, id)
+            .query("Update [dbo].[ShopCart] set isOrdered=1 where id = @id");
+        updateStatus.errCode = 0;
+        updateStatus.message = "Thay đổi thông tin thành công!"
+        return updateStatus;
+    }
+    catch (e) {
+        updateStatus.errCode = 1;
+        updateStatus.message = e.message.substring(0, 100);
+        return updateStatus;
+        //trans.rollback();
+
+    }
+
+}
+
 
 let deleted = async (ShopCart) => {
     //let trans;
@@ -140,5 +164,6 @@ module.exports = {
     getShopCartByUserID: getShopCartByUserID,
     insert: insert,
     update: update,
-    deleted: deleted
+    deleted: deleted,
+    updateIsOrdered: updateIsOrdered
 }

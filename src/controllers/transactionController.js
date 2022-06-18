@@ -1,4 +1,6 @@
 import transactionServices from '../services/transactionServices';
+import shopCartServices from '../services/shopCartServices';
+import orderServices from '../services/orderService';
 let getAllTransaction = async (req, res) => {
     try {
         let orders = await transactionServices.getAll();
@@ -30,7 +32,11 @@ let getTransactionByUserID = async (req, res) => {
 
 }
 
-let insert = async (req, res) => {
+let insert = async (req, res) => {//Thêm thông tin thanh toán
+    //Cập nhật trạng thái giỏ hàng lên 1
+    //console.log(req.bpdy);
+
+
     let userID = req.body.userID;
     let customerName = req.body.customerName;
     let customerEmail = req.body.customerEmail;
@@ -40,18 +46,36 @@ let insert = async (req, res) => {
     let message = req.body.message;
     let status = req.body.status;
     let note = req.body.note;
-    if (!userID || !customerName || !customerEmail || !customerPhone|| !amount||!customerAddress|| (!status&&!status==0)) {
+    if (!userID || !customerName || !customerEmail || !customerPhone || !amount || !customerAddress || (!status && !status == 0)) {
         return res.status(500).json({
             errCode: 1,
             message: "Vui lòng nhập đủ thông tin!"
         })
     }
+    req.body.listCart.forEach(async (element) => {
+        await shopCartServices.updateIsOrdered(element.id)
+    });
     let transaction = { ...req.body };
     transaction.created = new Date();
     transaction.isCanceled = 0;
     let transactionData = await transactionServices.insert(transaction);
+    let transactionID = transactionData.transactionID;
+    req.body.listCart.forEach(async (element, index) => {
+        let orderRequest = {
+            transactionID: transactionID,
+            idGuitar: element.idGuitar,
+            quantity: element.quantity,
+            amount: element.amount,
+            status: 0,
+            created: new Date(),
+            isCanceled: 0
+        }
+        console.log(index, ":", orderRequest);
+        await orderServices.insert(orderRequest);
+    });
     return res.status(200).json({
-        transactionData
+        transaction
+        //transactionData
     })
 
 }
@@ -75,6 +99,8 @@ let update = async (req, res) => {
 
 }
 
+
+
 let deleted = async (req, res) => {
     let id = req.body.id;
     if (!id) {
@@ -93,7 +119,7 @@ let deleted = async (req, res) => {
 
 module.exports = {
     getAllTransaction: getAllTransaction,
-    getTransactionByUserID:getTransactionByUserID,
+    getTransactionByUserID: getTransactionByUserID,
     insert: insert,
     update: update,
     deleted: deleted

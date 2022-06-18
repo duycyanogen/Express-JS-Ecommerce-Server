@@ -23,6 +23,15 @@ let getShopCartByUserID = async (req, res) => {
         })
     }
     let cartsData = await shopCartServices.getShopCartByUserID(userID);
+    if (cartsData && cartsData.shopCarts) {
+        cartsData.shopCarts = cartsData.shopCarts.map(cart => {
+            return {
+                ...cart,
+                imageURL: `http://localhost:8889/api/v1/image1?imageName=${cart.image?.split('.')[0]}_600x600.jpg`
+            }
+        })
+    }
+
     return res.status(200).json({
         message: cartsData.message,
         cartsData: cartsData.shopCarts
@@ -31,6 +40,7 @@ let getShopCartByUserID = async (req, res) => {
 }
 
 let insert = async (req, res) => {
+    console.log(req.body);
     let userID = req.body.userID;
     let idGuitar = req.body.idGuitar;
     let quantity = req.body.quantity;
@@ -88,7 +98,7 @@ let deleted = async (req, res) => {
 
 module.exports = {
     getAllShopCart: getAllShopCart,
-    getShopCartByUserID:getShopCartByUserID,
+    getShopCartByUserID: getShopCartByUserID,
     insert: insert,
     update: update,
     deleted: deleted

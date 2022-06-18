@@ -47,7 +47,6 @@ let handleRegis = async (req, res) => {
     let address = req.body.address;
     let phone = req.body.phone;
     let name = req.body.name;
-    console.log(req.body);
     if (!email || !password || !address || !phone || !name) {
         return res.status(500).json({
             errCode: 1,
@@ -59,10 +58,17 @@ let handleRegis = async (req, res) => {
     user.isDeleted = 0;
     user.idRole = 1;
     let userData = await userServices.insert(user);
-    console.log("User", userData);
-    return res.status(200).json({
-        ...userData
-    })
+    if (userData.errCode != 0) {
+        return res.status(500).json({
+            ...userData
+        })
+    }
+    else {
+        return res.status(200).json({
+            ...userData
+        })
+    }
+
 
 }
 

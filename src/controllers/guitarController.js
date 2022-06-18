@@ -35,10 +35,10 @@ let insert = async (req, res) => {
             })
         }
     })
-    res.json({
-        result: "ok",
-        message: `Upload file thành công!`
-    })
+    // res.json({
+    //     result: "ok",
+    //     message: `Upload file thành công!`
+    // })
 
 
     let name = req.body.name;

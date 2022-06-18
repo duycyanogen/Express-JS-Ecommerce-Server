@@ -69,6 +69,7 @@ let initWebRoutes = (app) => {
     router.post('/api/v1/category/add', categoryController.insert);
     router.post('/api/v1/category/delete', categoryController.deleted);
 
+
     //image
     router.get('/api/v1/image', imageController.getAllImage);
     router.post('/api/v1/getImage', imageController.getImage);
@@ -84,13 +85,13 @@ let initWebRoutes = (app) => {
             if (err) {
                 res.json({
                     result: "failed",
-                    message: `Upload thất bại! ${err}`
+                    message: `Upload th?t b?i! ${err}`
                 })
             }
         })
         res.json({
             result: "ok",
-            message: `Upload file thành công!`
+            message: `Upload file th�nh c�ng!`
         })
 
     })
@@ -105,10 +106,10 @@ let initWebRoutes = (app) => {
                 if (err) {
                     console.log(err);
                     res.json({
-                        result: "Lỗi",
+                        result: "L?i",
                         data: {},
                         numberOfImages: 0,
-                        message: `Lỗi đọc file!`
+                        message: `L?i d?c file!`
                     })
                     return;
                 }
@@ -117,10 +118,10 @@ let initWebRoutes = (app) => {
             })
         } catch (error) {
             res.json({
-                result: "Lỗi",
+                result: "L?i",
                 data: {},
                 numberOfImages: 0,
-                message: `Lỗi đọc file! + ${error}`
+                message: `L?i d?c file! + ${error}`
             })
         }
 

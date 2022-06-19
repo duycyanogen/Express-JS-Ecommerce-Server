@@ -85,13 +85,13 @@ let initWebRoutes = (app) => {
             if (err) {
                 res.json({
                     result: "failed",
-                    message: `Upload th?t b?i! ${err}`
+                    message: `Upload thấtt bại! ${err}`
                 })
             }
         })
         res.json({
             result: "ok",
-            message: `Upload file th�nh c�ng!`
+            message: `Upload file thành công!`
         })
 
     })
@@ -106,10 +106,10 @@ let initWebRoutes = (app) => {
                 if (err) {
                     console.log(err);
                     res.json({
-                        result: "L?i",
+                        result: "Lỗi",
                         data: {},
                         numberOfImages: 0,
-                        message: `L?i d?c file!`
+                        message: `Lỗi đọc file!`
                     })
                     return;
                 }
@@ -118,10 +118,10 @@ let initWebRoutes = (app) => {
             })
         } catch (error) {
             res.json({
-                result: "L?i",
+                result: "Lỗi?i",
                 data: {},
                 numberOfImages: 0,
-                message: `L?i d?c file! + ${error}`
+                message: `Lỗi đọc file! + ${error}`
             })
         }
 

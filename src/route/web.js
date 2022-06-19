@@ -90,7 +90,7 @@ let initWebRoutes = (app) => {
         })
         res.json({
             result: "ok",
-            message: `Upload file thành công!`
+            message: `Upload file thï¿½nh cï¿½ng!`
         })
 
     })
@@ -100,7 +100,6 @@ let initWebRoutes = (app) => {
         try {
             const uploadFolder = path.join(__dirname, "..", "uploads");
             let imageName = `${uploadFolder}\\${req.query.imageName}`;
-            console.log(req.query)
             fs.readFile(imageName, (err, imageData) => {
                 if (err) {
                     console.log(err);

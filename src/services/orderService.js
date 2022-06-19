@@ -20,14 +20,14 @@ let getOrderByUserID = async (userID) => {
         let pool = await conn;
         let orders = await pool.request()
             .input('input_parameter', sql.Int, userID)
-            .query("select ord.*,g.name,trans.isCanceled as UserCanceled from [Order] ord,[Transaction] trans,Guitar g where ord.transactionID=trans.id and ord.idGuitar=g.id and trans.userID=@input_parameter");
+            .query("select ord.*,g.name,image,trans.isCanceled as UserCanceled from [Order] ord,[Transaction] trans,Guitar g,Image i where ord.transactionID=trans.id and ord.idGuitar=g.id and g.id = i.idGuitar and trans.userID=@input_parameter");
 
-        if (orders){
-            orderData.orders=orders.recordsets[0];
-            orderData.message="ok"
+        if (orders) {
+            orderData.orders = orders.recordsets[0];
+            orderData.message = "ok"
         }
-        else{
-            orderData.message="Không tìm thấy user ID"
+        else {
+            orderData.message = "Không tìm thấy user ID"
         }
         return orderData;
     }
@@ -147,9 +147,9 @@ let deleted = async (Order) => {
 
 module.exports = {
     getAll: getAll,
-    getOrderByUserID:getOrderByUserID,
+    getOrderByUserID: getOrderByUserID,
     insert: insert,
     update: update,
-    cancelByID:cancelByID,
+    cancelByID: cancelByID,
     deleted: deleted
 }

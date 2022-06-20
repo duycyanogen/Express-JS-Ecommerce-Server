@@ -79,36 +79,6 @@ let update = async (req, res) => {
     })
 
 }
-let cancelByID = async (req, res) => {
-
-    let id = req.body.id;
-    if (!id) {
-        return res.status(500).json({
-            errCode: 1,
-            message: "Vui lòng nhập id!"
-        })
-    }
-    let orderData = await orderServices.cancelByID(id);
-    return res.status(200).json({
-        orderData
-    })
-
-}
-let confirmByID = async (req, res) => {
-    let id = req.body.id;
-    if (!id) {
-        return res.status(500).json({
-            errCode: 1,
-            message: "Vui lòng nhập id!"
-        })
-    }
-    let order = { ...req.body };
-    let orderData = await orderServices.confirmByID(order);
-    console.log("order", orderData);
-    return res.status(200).json({
-        orderData
-    })
-}
 let deleted = async (req, res) => {
     let id = req.body.id;
     if (!id) {
@@ -128,9 +98,8 @@ let deleted = async (req, res) => {
 module.exports = {
     getAllOrder: getAllOrder,
     getOrderByUserID: getOrderByUserID,
-    confirmByID:confirmByID,
+    // confirmByID:confirmByID,
     insert: insert,
     update: update,
-    cancelByID: cancelByID,
     deleted: deleted
 }

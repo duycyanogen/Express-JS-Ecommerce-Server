@@ -100,6 +100,35 @@ let update = async (req, res) => {
 }
 
 
+let confirmByID = async (req, res) => {
+    let id = req.body.id;
+    if (!id) {
+        return res.status(500).json({
+            errCode: 1,
+            message: "Vui lòng nhập id!"
+        })
+    }
+    let transactionData = await transactionServices.confirmByID(id);
+    console.log("transaction", transactionData);
+    return res.status(200).json({
+        transactionData
+    })
+}
+let cancelByID = async (req, res) => {
+
+    let id = req.body.id;
+    if (!id) {
+        return res.status(500).json({
+            errCode: 1,
+            message: "Vui lòng nhập id!"
+        })
+    }
+    let transactionData = await transactionServices.cancelByID(id);
+    return res.status(200).json({
+        transactionData
+    })
+
+}
 
 let deleted = async (req, res) => {
     let id = req.body.id;
@@ -120,7 +149,9 @@ let deleted = async (req, res) => {
 module.exports = {
     getAllTransaction: getAllTransaction,
     getTransactionByUserID: getTransactionByUserID,
+    confirmByID:confirmByID,
     insert: insert,
     update: update,
+    cancelByID: cancelByID,
     deleted: deleted
 }

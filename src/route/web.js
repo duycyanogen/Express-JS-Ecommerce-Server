@@ -46,8 +46,6 @@ let initWebRoutes = (app) => {
     router.post('/api/v1/order/update', orderController.update);
     router.post('/api/v1/order/delete', orderController.deleted);
     router.post('/api/v1/getOrder', orderController.getOrderByUserID);
-    router.post('/api/v1/cancelOrder', orderController.cancelByID);
-    router.post('/api/v1/confirmOrder', orderController.confirmByID);
     //shopcart
     router.get('/api/v1/cart', shopCartController.getAllShopCart);
     router.post('/api/v1/cart/add', shopCartController.insert);
@@ -62,6 +60,8 @@ let initWebRoutes = (app) => {
     router.post('/api/v1/transaction/delete', transactionController.deleted);
     router.post('/api/v1/getTransaction', transactionController.getTransactionByUserID);
 
+    router.post('/api/v1/cancelTransaction', transactionController.cancelByID);
+    router.post('/api/v1/confirmTransaction', transactionController.confirmByID);
 
     //category
     router.get('/api/v1/category', categoryController.getAllCategory);
@@ -91,7 +91,7 @@ let initWebRoutes = (app) => {
         })
         res.json({
             result: "ok",
-            message: `Upload file th�nh c�ng!`
+            message: `Upload file thành công!`
         })
 
     })

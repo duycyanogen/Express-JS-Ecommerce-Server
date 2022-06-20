@@ -31,7 +31,7 @@ let initWebRoutes = (app) => {
     //guitar
     router.get('/api/v1/guitar', guitarController.getAllGuitar);
     router.post('/api/v1/guitar/add', upload.single("file"), guitarController.insert);
-    router.post('/api/v1/guitar/update', guitarController.update);
+    router.post('/api/v1/guitar/update', upload.single("file"), guitarController.update);
     router.post('/api/v1/guitar/delete', guitarController.deleted);
     //user
     router.get('/api/v1/user', userController.getAllUser);
@@ -47,6 +47,7 @@ let initWebRoutes = (app) => {
     router.post('/api/v1/order/delete', orderController.deleted);
     router.post('/api/v1/getOrder', orderController.getOrderByUserID);
     router.post('/api/v1/cancelOrder', orderController.cancelByID);
+    router.post('/api/v1/confirmOrder', orderController.confirmByID);
     //shopcart
     router.get('/api/v1/cart', shopCartController.getAllShopCart);
     router.post('/api/v1/cart/add', shopCartController.insert);
@@ -84,7 +85,7 @@ let initWebRoutes = (app) => {
             if (err) {
                 res.json({
                     result: "failed",
-                    message: `Upload th?t b?i! ${err}`
+                    message: `Upload thấtt bại! ${err}`
                 })
             }
         })
@@ -104,10 +105,10 @@ let initWebRoutes = (app) => {
                 if (err) {
                     console.log(err);
                     res.json({
-                        result: "L?i",
+                        result: "Lỗi",
                         data: {},
                         numberOfImages: 0,
-                        message: `L?i d?c file!`
+                        message: `Lỗi đọc file!`
                     })
                     return;
                 }
@@ -116,10 +117,10 @@ let initWebRoutes = (app) => {
             })
         } catch (error) {
             res.json({
-                result: "L?i",
+                result: "Lỗi?i",
                 data: {},
                 numberOfImages: 0,
-                message: `L?i d?c file! + ${error}`
+                message: `Lỗi đọc file! + ${error}`
             })
         }
 

@@ -4,7 +4,7 @@ import { conn, sql } from '../connect';
 let getAll = async () => {
     try {
         let pool = await conn;
-        let sqlString = "select * from [dbo].[User]";
+        let sqlString = "select u.*,r.roleName from [dbo].[User] u, Role r where u.idRole=r.id and u.isDeleted=0";
         let users = await pool.request().query(sqlString);
         console.log("users", users)
         if (users)
@@ -23,7 +23,7 @@ let findByEmail = async (email) => {
         let pool = await conn;
         let users = await pool.request()
             .input('input_parameter', sql.NVarChar, email)
-            .query("SELECT * from [dbo].[User] where email = @input_parameter");
+            .query("SELECT * from [dbo].[User] where email = @input_parameter and isDeleted=0");
 
         if (users)
             return (users.recordsets[0][0])
@@ -115,10 +115,11 @@ let update = async (user) => {
             .input('name', sql.NVarChar, user.name)
             .input('phone', sql.NVarChar, user.phone)
             .input('address', sql.NVarChar, user.address)
+            .input('password', sql.NVarChar, user.password)
             .input('isDeleted', sql.SmallInt, user.isDeleted)
             .input('idRole', sql.Int, user.idRole)
             .input('updated', sql.Date, user.updated)
-            .query("Update [dbo].[User] set name = @name,phone = @phone,address=@address,isDeleted=@isDeleted,idRole=@idRole, updated = @updated where id = @id");
+            .query("Update [dbo].[User] set name = @name,phone = @phone,address=@address,password=@password,isDeleted=@isDeleted,idRole=@idRole, updated = @updated where id = @id");
         updateStatus.errCode = 0;
         updateStatus.message = "Thay đổi thông tin thành công!"
         return updateStatus;

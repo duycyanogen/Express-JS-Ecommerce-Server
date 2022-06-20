@@ -3,7 +3,9 @@ import { conn, sql } from '../connect';
 let getAll = async () => {
     try {
         let pool = await conn;
-        let sqlString = "select * from [dbo].[Order] where isCanceled=0";
+        let sqlString = "select ord.id,trans.userID, trans.customerName,trans.customerEmail,trans.customerPhone,trans.customerAddress,g.name as guitarName,ord.quantity,ord.amount,ord.[status],ord.created,ord.updated,ord.isCanceled"
+            + " from [dbo].[Order] ord,Guitar g,[Transaction] trans"
+            + " where ord.isCanceled=0 and ord.idGuitar=g.id and ord.transactionID=trans.id ";
         let orders = await pool.request().query(sqlString);
         if (orders)
             return (orders.recordsets[0])
@@ -96,6 +98,31 @@ let update = async (Order) => {
 
 }
 
+let confirmByID = async (Order) => {
+    //let trans;
+    let updateStatus = {};
+    try {
+
+        let pool = await conn;
+        //trans = (await conn).transaction();
+        //trans.begin();
+        let result = await pool.request()
+            .input('id', sql.Int, Order.id)
+            .query("Update [dbo].[Order] set status = 1 where id = @id");
+        updateStatus.errCode = 0;
+        updateStatus.message = "Thay đổi thông tin thành công!"
+        return updateStatus;
+    }
+    catch (e) {
+        updateStatus.errCode = 1;
+        updateStatus.message = e.message.substring(0, 100);
+        return updateStatus;
+        //trans.rollback();
+
+    }
+
+}
+
 let cancelByID = async (id) => {
     //let trans;
     let updateStatus = {};
@@ -148,6 +175,7 @@ let deleted = async (Order) => {
 module.exports = {
     getAll: getAll,
     getOrderByUserID: getOrderByUserID,
+    confirmByID: confirmByID,
     insert: insert,
     update: update,
     cancelByID: cancelByID,

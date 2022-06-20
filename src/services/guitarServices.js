@@ -75,6 +75,15 @@ let update = async (Guitar) => {
             .input('views', sql.Int, Guitar.views)
             .input('updated', sql.Date, Guitar.updated)
             .query("Update [dbo].[Guitar] set name = @name,price = @price,contents=@contents,discount=@discount,views=@views, updated = @updated where id = @id");
+
+        await pool.request()
+            .input('idGuitar', sql.Int, Guitar.id)
+            .input('image', sql.NVarChar, Guitar.fileName)
+            .input('imgDetail', sql.NVarChar, null)
+            .input('isDeleted', sql.SmallInt, 0)
+            .query("Update [dbo].[Image] set image = @image,isDeleted = 0 where idGuitar = @idGuitar");
+
+        console.log(Guitar.id);
         updateStatus.errCode = 0;
         updateStatus.message = "Thay đổi thông tin thành công!"
         return updateStatus;

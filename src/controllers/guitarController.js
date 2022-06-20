@@ -36,10 +36,7 @@ let insert = async (req, res) => {
                 })
             }
         })
-        // res.status(200).json({
-        //     result: "ok",
-        //     message: `Thêm mới sản phẩm thành công!`
-        // })
+
         let name = req.body.name;
         let price = req.body.price;
         let contents = req.body.contents;
@@ -67,7 +64,16 @@ let insert = async (req, res) => {
 }
 
 let update = async (req, res) => {
-
+    const uploadFolder = path.join(__dirname, "..", "uploads");
+    let imageName = `${uploadFolder}\\${req.file.filename}`;
+    sharp(imageName).resize(600, 600).toFile(imageName.split('.')[0] + "_600x600." + imageName.split('.')[1], function (err) {
+        if (err) {
+            res.json({
+                result: "failed",
+                message: `Upload thất bại! ${err}`
+            })
+        }
+    })
     let id = req.body.id;
     if (!id) {
         return res.status(500).json({
@@ -75,6 +81,7 @@ let update = async (req, res) => {
             message: "Vui lòng nhập id!"
         })
     }
+    req.body.fileName = req.file.filename;
     let guitar = { ...req.body };
     guitar.updated = new Date();
     let guitarData = await guitarServices.update(guitar);

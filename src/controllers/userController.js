@@ -56,7 +56,7 @@ let handleRegis = async (req, res) => {
     let user = { ...req.body };
     user.created = new Date();
     user.isDeleted = 0;
-    user.idRole = 1;
+    user.idRole = 3;
     let userData = await userServices.insert(user);
     if (userData.errCode != 0) {
         return res.status(500).json({
@@ -103,7 +103,7 @@ let deleted = async (req, res) => {
     let userData = await userServices.deleted(user);
     console.log("User", userData);
     return res.status(200).json({
-        userData
+        ...userData
     })
 }
 

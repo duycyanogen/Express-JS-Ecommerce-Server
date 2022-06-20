@@ -20,7 +20,7 @@ let getShopCartByUserID = async (userID) => {
         let pool = await conn;
         let shopCarts = await pool.request()
             .input('input_parameter', sql.Int, userID)
-            .query("select image, g.price, sc.id ,userID , sc.idGuitar,g.name as guitarName,quantity,amount,sc.created,sc.updated from ShopCart sc,Guitar g, Image i where sc.idGuitar=g.id and g.id = i.idGuitar and userID=@input_parameter and isOrdered=0");
+            .query("select image, g.price, g.discount, sc.id ,userID , sc.idGuitar,g.name as guitarName,quantity,amount,sc.created,sc.updated from ShopCart sc,Guitar g, Image i where sc.idGuitar=g.id and g.id = i.idGuitar and userID=@input_parameter and isOrdered=0");
 
         if (shopCarts) {
             cartsData.shopCarts = shopCarts.recordsets[0];
@@ -46,7 +46,7 @@ let insert = async (ShopCart) => {
         let value = await pool.request()
             .input('userID', sql.Int, ShopCart.userID)
             .input('idGuitar', sql.Int, ShopCart.idGuitar)
-            .query("select COUNT(*)as count from ShopCart where userID=@userID and idGuitar=@idGuitar");
+            .query("select COUNT(*)as count from ShopCart where userID=@userID and idGuitar=@idGuitar and isOrdered=0");
         if (value.recordsets[0][0].count > 0) {
             let update = await pool.request()
                 .input('userID', sql.Int, ShopCart.userID)

@@ -24,6 +24,14 @@ let getOrderByUserID = async (req, res) => {
         })
     }
     let orderData = await orderServices.getOrderByUserID(userID);
+    if (orderData && orderData.orders) {
+        orderData.orders = orderData.orders.map(order => {
+            return {
+                ...order,
+                imageURL: `http://localhost:8889/api/v1/image1?imageName=${order.image?.split('.')[0]}_600x600.jpg`
+            }
+        })
+    }
     return res.status(200).json({
         message: orderData.message,
         orderData: orderData.orders
@@ -37,7 +45,7 @@ let insert = async (req, res) => {
     let quantity = req.body.quantity;
     let amount = req.body.amount;
     let status = req.body.status;
-    if (!transactionID || !idGuitar || !quantity || !amount||(!status&&!status==0)) {
+    if (!transactionID || !idGuitar || !quantity || !amount || (!status && !status == 0)) {
         return res.status(500).json({
             errCode: 1,
             message: "Vui lòng nhập đủ thông tin!"
@@ -71,36 +79,6 @@ let update = async (req, res) => {
     })
 
 }
-let cancelByID = async (req, res) => {
-
-    let id = req.body.id;
-    if (!id) {
-        return res.status(500).json({
-            errCode: 1,
-            message: "Vui lòng nhập id!"
-        })
-    }
-    let orderData = await orderServices.cancelByID(id);
-    return res.status(200).json({
-        orderData
-    })
-
-}
-let confirmByID = async (req, res) => {
-    let id = req.body.id;
-    if (!id) {
-        return res.status(500).json({
-            errCode: 1,
-            message: "Vui lòng nhập id!"
-        })
-    }
-    let order = { ...req.body };
-    let orderData = await orderServices.confirmByID(order);
-    console.log("order", orderData);
-    return res.status(200).json({
-        orderData
-    })
-}
 let deleted = async (req, res) => {
     let id = req.body.id;
     if (!id) {
@@ -120,9 +98,7 @@ let deleted = async (req, res) => {
 module.exports = {
     getAllOrder: getAllOrder,
     getOrderByUserID:getOrderByUserID,
-    confirmByID:confirmByID,
     insert: insert,
     update: update,
-    cancelByID:cancelByID,
     deleted: deleted
 }

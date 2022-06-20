@@ -107,7 +107,51 @@ let update = async (Transaction) => {
     }
 
 }
+let confirmByID = async (id) => {
+    //let trans;
+    let updateStatus = {};
+    try {
 
+        let pool = await conn;
+        //trans = (await conn).transaction();
+        //trans.begin();
+        let result = await pool.request()
+            .input('id', sql.Int, id)
+            .query("Update [dbo].[Transaction] set status = 1 where id = @id");
+        updateStatus.errCode = 0;
+        updateStatus.message = "Thay đổi thông tin thành công!"
+        return updateStatus;
+    }
+    catch (e) {
+        updateStatus.errCode = 1;
+        updateStatus.message = e.message.substring(0, 100);
+        return updateStatus;
+        //trans.rollback();
+
+    }
+
+}
+let cancelByID = async (id) => {
+    //let trans;
+    let updateStatus = {};
+    try {
+        let pool = await conn;
+        let result = await pool.request()
+            .input('id', sql.Int, id)
+            .query("Update [dbo].[Transaction] set isCanceled=1 where id = @id");
+        updateStatus.errCode = 0;
+        updateStatus.message = "Thay đổi thông tin thành công!"
+        return updateStatus;
+    }
+    catch (e) {
+        updateStatus.errCode = 1;
+        updateStatus.message = e.message.substring(0, 100);
+        return updateStatus;
+        //trans.rollback();
+
+    }
+
+}
 
 let deleted = async (Transaction) => {
     //let trans;
@@ -139,6 +183,8 @@ let deleted = async (Transaction) => {
 module.exports = {
     getAll: getAll,
     getTransactionByUserID:getTransactionByUserID,
+    confirmByID:confirmByID,
+    cancelByID: cancelByID,
     insert: insert,
     update: update,
     deleted: deleted
